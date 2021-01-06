@@ -7,20 +7,21 @@ import pyperclip as clipboard
 
 def normalizeposition(position, size):
     data = {"X": None, "Y": None, "width": None, "height": None}
+    offsets = {'small': 10, 'medium': 20, 'high': 70}
 
     if position[0] < 0:
-        data["X"] = ((position[0] * -1) + 20) * -1
-        data["width"] = (((position[0] * -1) + size[0]) - 10) * -1
+        data["X"] = ((position[0] * -1) + offsets['medium']) * -1
+        data["width"] = (((position[0] * -1) + size[0]) - offsets['small']) * -1
     else:
-        data["X"] = position[0] + 20
-        data["width"] = (position[0] + size[0]) - 10
+        data["X"] = position[0] + offsets['medium']
+        data["width"] = (position[0] + size[0]) - offsets['small']
 
     if position[1] < 0:
-        data["Y"] = ((position[1] * -1) + 70)
-        data["Y"] = (((position[1] * -1) + size[1]) + 20)
+        data["Y"] = ((position[1] * -1) + offsets['high'])
+        data["Y"] = (((position[1] * -1) + size[1]) + offsets['medium'])
     else:
-        data["Y"] = position[1] + 70
-        data["height"] = (position[1] + size[1]) + 20
+        data["Y"] = position[1] + offsets['high']
+        data["height"] = (position[1] + size[1]) + offsets['medium']
 
     return data
 
@@ -35,24 +36,27 @@ innerWindow, capturedImg, readNumbers = None, None, None
 
 # Use this if you have configured Tesseract in your Environment Variables
 # Otherwise call it directly from it directory
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-ocr.pytesseract.tesseract_cmd = "tesseract"
+# ocr.pytesseract.tesseract_cmd = "tesseract"
+ocr.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 custom_config = r'--oem 3 --psm 6 outputbase digits'
 
 
 while True:
     event, values = window.read()
 
-    if event == "CAPTURE":
-        innerWindow = normalizeposition(window.CurrentLocation(), window.Size)
-        capturedImg = screenshot.grab(bbox=(innerWindow["X"],
-                                            innerWindow["Y"],
-                                            innerWindow["width"],
-                                            innerWindow["height"]))
-        readNumbers = ocr.image_to_string(capturedImg, config=custom_config)
-        readNumbers = re.sub(r'\D*', '', readNumbers)
-        window["-OUTPUT-"].update(readNumbers)
-        clipboard.copy(readNumbers)
+    try:
+        if event == "CAPTURE":
+            innerWindow = normalizeposition(window.CurrentLocation(), window.Size)
+            capturedImg = screenshot.grab(bbox=(innerWindow["X"],
+                                                innerWindow["Y"],
+                                                innerWindow["width"],
+                                                innerWindow["height"]))
+            readNumbers = ocr.image_to_string(capturedImg, config=custom_config)
+            readNumbers = re.sub(r'\D*', '', readNumbers)
+            window["-OUTPUT-"].update(readNumbers)
+            clipboard.copy(readNumbers)
+    except ValueError as val:
+        gui.popup_error('Invalid area, try another monitor.')
 
     if event == "COPY":
         clipboard.copy(readNumbers)

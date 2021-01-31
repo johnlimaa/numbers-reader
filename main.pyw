@@ -1,11 +1,19 @@
-import re
+import sys
 import PySimpleGUI as gui
-import pyscreenshot as screenshot
 import pytesseract as ocr
-import pyperclip as clipboard
+from pip import main as pip_installer
+from re import sub as regex
+from pyscreenshot import grab as screenshot
+from pyperclip import copy as clipboard
+
+modules = ['PySimpleGUI', 'pyscreenshot', 'pytesseract', 'pyperclip']
+
+for m in modules:
+    if not (m in sys.modules.keys()):
+        pip_installer(['install', m])
 
 
-def normalizeposition(position, size):
+def normalize_position(position, size):
     data = {"X": None, "Y": None, "width": None, "height": None}
     offsets = {'small': 10, 'medium': 20, 'high': 70}
 
@@ -46,20 +54,20 @@ while True:
 
     try:
         if event == "CAPTURE":
-            innerWindow = normalizeposition(window.CurrentLocation(), window.Size)
-            capturedImg = screenshot.grab(bbox=(innerWindow["X"],
+            innerWindow = normalize_position(window.CurrentLocation(), window.Size)
+            capturedImg = screenshot(bbox=(innerWindow["X"],
                                                 innerWindow["Y"],
                                                 innerWindow["width"],
                                                 innerWindow["height"]))
             readNumbers = ocr.image_to_string(capturedImg, config=custom_config)
-            readNumbers = re.sub(r'\D*', '', readNumbers)
+            readNumbers = regex(r'\D*', '', readNumbers)
             window["-OUTPUT-"].update(readNumbers)
-            clipboard.copy(readNumbers)
+            clipboard(readNumbers)
     except ValueError as val:
         gui.popup_error('Invalid area, try another monitor.')
 
     if event == "COPY":
-        clipboard.copy(readNumbers)
+        clipboard(readNumbers)
 
     if event == gui.WIN_CLOSED:
         break

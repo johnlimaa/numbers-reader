@@ -43,8 +43,8 @@ window = gui.Window("Numbers Reader", layout, size=(480, 180), resizable=True, a
 innerWindow, capturedImg, readNumbers = None, None, None
 
 # Use this if you have configured Tesseract in your Environment Variables
-# Otherwise call it directly from it directory
 # ocr.pytesseract.tesseract_cmd = "tesseract"
+# Otherwise call it directly from it directory
 ocr.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 custom_config = r'--oem 3 --psm 6 outputbase digits'
 

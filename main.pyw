@@ -1,10 +1,5 @@
 import sys
-import PySimpleGUI as gui
-import pytesseract as ocr
 from pip import main as pip_installer
-from re import sub as regex
-from pyscreenshot import grab as screenshot
-from pyperclip import copy as clipboard
 
 modules = ['PySimpleGUI', 'pyscreenshot', 'pytesseract', 'pyperclip']
 
@@ -12,6 +7,11 @@ for m in modules:
     if not (m in sys.modules.keys()):
         pip_installer(['install', m])
 
+import PySimpleGUI as gui
+import pytesseract as ocr
+from re import sub as regex
+from pyscreenshot import grab as screenshot
+from pyperclip import copy as clipboard
 
 def normalize_position(position, size):
     data = {"X": None, "Y": None, "width": None, "height": None}

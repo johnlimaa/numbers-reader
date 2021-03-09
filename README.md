@@ -8,8 +8,9 @@ Reading numbers
 </p>
 
 ### About
-This application allows the user to read number on a bill, using OCR, and send it to his clipboard.
-It is fully functional on Windows, I got some problems with Ubuntu.
+This application is used to read the numbers instead of the barcode on a bill, using OCR, and copy it to user's clipboard.
+I tried to use third party barcodes, but they were inaccurate in my tests. So I took the advice of a friend and created this tool.
+It's functional on Windows and I'm working on a Linux version.
 
 ### What are its dependencies? 
 * PySimpleGUI
